@@ -1,21 +1,374 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Static Web App</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>charity: water — Clean water changes everything</title>
+  <meta name="description" content="Join the movement bringing clean, safe water to communities who need it most. Transparent. Impact-driven. Built for action.">
+
+  <!--
+    🔧 How to use this file
+    1) Search for TODO: to quickly find spots to customize.
+    2) Replace placeholder images and copy with your brand content.
+    3) Keep it HTML + CSS only (no JS). All layout is responsive and accessible.
+  -->
+
+  <style>
+    /* ------------------------------
+      🎨 Brand tokens (easy to tweak)
+    ------------------------------- */
+    :root {
+      /* TODO: Set brand colors to match your Canva design */
+      --brand-yellow: #ffcc00;   /* primary */
+      --brand-black: #111111;    /* text on light */
+      --brand-ink: #222222;      /* headings */
+      --brand-offwhite: #fafafa; /* light background */
+      --brand-water: #78a8bc;    /* soft water-teal pulled from your mock */
+      --accent-hazel: #b97a2b;   /* optional warm accent ("hazel" tone) */
+
+      --text: var(--brand-black);
+      --text-muted: #4f5665;
+      --border: #e6e6e6;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.08);
+      --maxw: 1120px;
+    }
+
+    /* Base */
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: system-ui,-apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: white;
+      line-height: 1.5;
+    }
+
+    img { max-width: 100%; display: block; border-radius: calc(var(--radius) - 4px); }
+    a { color: var(--brand-ink); text-decoration: none; }
+    a:focus { outline: 3px solid var(--brand-yellow); outline-offset: 2px; }
+
+    .container { width: min(100% - 2rem, var(--maxw)); margin-inline: auto; }
+    .pill { display:inline-block; padding:.35rem .75rem; border-radius:999px; border:1px solid var(--border); background: #fff; font-size:.875rem; }
+    .btn { display:inline-block; padding:.9rem 1.1rem; border-radius: 12px; font-weight: 700; border:2px solid transparent; }
+    .btn-primary { background: var(--brand-yellow); color:#000; }
+    .btn-primary:hover { filter: brightness(0.95); }
+    .btn-outline { border-color: #111; color:#111; background: transparent; }
+    .btn-outline:hover { background: #111; color:#fff; }
+
+    header {
+      position: sticky; top:0; z-index: 10; backdrop-filter: blur(8px);
+      background: rgba(255,255,255,.75); border-bottom: 1px solid var(--border);
+    }
+    .nav { display:flex; align-items:center; justify-content:space-between; padding:.85rem 0; }
+    .brand { display:flex; align-items:center; gap:.6rem; font-weight:800; }
+    .brand-mark { width:28px; height:28px; border-radius:8px; background: var(--brand-yellow); border:1px solid #000; }
+    nav ul { display:flex; gap:1rem; list-style:none; padding:0; margin:0; }
+    nav a { font-size:.95rem; color:#222; }
+
+    /* Hero */
+    .hero { position: relative; isolation:isolate; }
+    .hero::before {
+      content: ""; position:absolute; inset:0;
+      /* TODO: Replace this placeholder with your hero image */
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,.20) 60%, rgba(255,255,255,0) 100%),
+        url('https://images.unsplash.com/photo-1508182311256-3ad3b2f8c3d7?q=80&w=1800&auto=format&fit=crop') center/cover no-repeat;
+      z-index:-1; filter: saturate(1.05);
+    }
+    .hero-inner { min-height: 72vh; display:grid; place-items:center; text-align:center; padding: 4rem 0 3rem; }
+    .hero-card { background: rgba(255,255,255,.85); border:1px solid var(--border); box-shadow: var(--shadow); border-radius: 18px; padding: clamp(1rem, 2vw + 1rem, 2rem); max-width: 760px; }
+    .eyebrow { color:#111; }
+    .hero h1 { font-size: clamp(2rem, 2vw + 1.8rem, 3rem); line-height:1.1; margin: .6rem 0 .5rem; letter-spacing:-.02em; }
+    .hero p { color: var(--text-muted); margin: 0 0 1.25rem; font-size:1.05rem; }
+    .cta-row { display:flex; gap:.75rem; flex-wrap:wrap; justify-content:center; }
+
+    /* Quick donate strip */
+    .donate-strip { background: var(--brand-ink); color:#fff; padding: .85rem 0; }
+    .donate-strip .container { display:flex; gap:.75rem; align-items:center; justify-content:center; flex-wrap: wrap; }
+    .amount { padding:.6rem .9rem; border-radius: 999px; border:2px solid #fff; }
+    .amount[aria-pressed="true"] { background: var(--brand-yellow); color:#000; border-color: var(--brand-yellow); }
+
+    /* Trust + impact cards */
+    .section { padding: clamp(2rem, 4vw + 1rem, 4rem) 0; }
+    .grid { display:grid; gap:1rem; }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .card { border:1px solid var(--border); border-radius: var(--radius); padding:1.25rem; background:#fff; box-shadow: var(--shadow); }
+    .card h3 { margin:.2rem 0 .25rem; }
+    .muted { color: var(--text-muted); font-size:.98rem; }
+    .stat { font-size: clamp(2rem, 1.8vw + 1.6rem, 2.8rem); font-weight:800; letter-spacing:-.02em; }
+
+    /* How it works */
+    .steps { counter-reset: step; }
+    .step { position:relative; padding-left: 3.25rem; }
+    .step::before { counter-increment: step; content: counter(step); position:absolute; left:0; top:.2rem; width:2.2rem; height:2.2rem; border-radius:999px; display:grid; place-items:center; font-weight:800; background: var(--brand-yellow); border:1px solid #111; }
+
+    /* Projects gallery */
+    .gallery { display:grid; gap: .9rem; grid-template-columns: repeat(12, 1fr); }
+    .tile { grid-column: span 4; position:relative; overflow:hidden; border-radius: var(--radius); border: 1px solid var(--border); }
+    .tile img { width:100%; height:220px; object-fit:cover; border-radius: 0; }
+    .tile .label { position:absolute; left:.6rem; bottom:.6rem; background: rgba(0,0,0,.7); color:#fff; padding:.35rem .6rem; border-radius: 8px; font-size:.85rem; }
+
+    /* Testimonial */
+    blockquote { margin:0; font-size:1.25rem; font-weight:600; }
+    cite { display:block; margin-top:.6rem; color: var(--text-muted); font-style: normal; }
+
+    /* FAQ */
+    details { border:1px solid var(--border); border-radius: var(--radius); padding: .9rem 1rem; background:#fff; }
+    summary { cursor:pointer; font-weight:700; }
+    details + details { margin-top:.75rem; }
+
+    /* Footer */
+    footer { background: var(--brand-ink); color:#fff; }
+    .footer-grid { display:grid; grid-template-columns: 2fr 1fr 1fr; gap:1.2rem; }
+    .foot a { color:#fff; }
+    .legal { color:#d6d6d6; font-size:.9rem; }
+
+    /* Responsive tweaks */
+    @media (max-width: 900px){
+      .grid-3 { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .gallery .tile { grid-column: span 6; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px){
+      nav ul { display:none; }
+      .gallery .tile { grid-column: span 12; }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to the Static Web App</h1>
-    </header>
-    <main>
-        <p>This is the main content of the web application.</p>
-    </main>
-    <footer>
-        <p>&copy; 2023 Static Web App</p>
-    </footer>
-    <script src="js/app.js"></script>
+  <!-- ================= Header / Nav ================= -->
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#top" aria-label="charity: water home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>charity: water</span>
+      </a>
+      <nav aria-label="Primary">
+        <ul>
+          <li><a href="#impact">Impact</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a class="btn btn-primary" href="#donate">Donate</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ================= Hero ================= -->
+  <section class="hero" id="top">
+    <div class="container hero-inner">
+      <div class="hero-card" role="region" aria-label="Hero message">
+        <span class="pill eyebrow">Transparent • Impact‑driven • Community‑led</span>
+        <h1>Turn your small contribution into clean water for all</h1>
+        <p>For college students who want to take action on global water justice, we’re the movement that turns <strong>every dollar</strong> into <strong>real, visible change</strong>&nbsp;— funding projects that bring clean, safe water to communities who need it most.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#donate">Donate now</a>
+          <a class="btn btn-outline" href="#impact">See your impact</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Quick donate ================= -->
+  <section class="donate-strip" id="donate" aria-label="Quick donate">
+    <div class="container">
+      <strong>Quick donate:</strong>
+      <span class="amount" role="button" aria-pressed="true" tabindex="0"
+        onclick="this.setAttribute('aria-pressed', 'true');"
+        onkeydown="if(event.key==='Enter'||event.key===' '){this.click();event.preventDefault();}"
+      >$10</span>
+      <span class="amount" role="button" tabindex="0"
+        onclick="this.setAttribute('aria-pressed', 'true');"
+        onkeydown="if(event.key==='Enter'||event.key===' '){this.click();event.preventDefault();}"
+      >$25</span>
+      <span class="amount" role="button" tabindex="0"
+        onclick="this.setAttribute('aria-pressed', 'true');"
+        onkeydown="if(event.key==='Enter'||event.key===' '){this.click();event.preventDefault();}"
+      >$50</span>
+      <span class="amount" role="button" tabindex="0"
+        onclick="this.setAttribute('aria-pressed', 'true');"
+        onkeydown="if(event.key==='Enter'||event.key===' '){this.click();event.preventDefault();}"
+      >$100</span>
+      <button class="btn btn-primary" type="button" onclick="window.location.href='https://donate.charitywater.org/'">Continue</button>
+      <span class="pill" aria-label="Your gift is tax-deductible">100% to the field</span>
+    </div>
+  </section>
+
+  <!-- ================= Trust & Impact ================= -->
+  <section class="section" id="impact">
+    <div class="container">
+      <div class="grid grid-3">
+        <article class="card">
+          <div class="stat">100%</div>
+          <h3>of public donations fund water projects</h3>
+          <p class="muted">Private donors cover our operating costs so your gift goes straight to the field.</p>
+        </article>
+        <article class="card">
+          <div class="stat">14M+</div>
+          <h3>people reached (and counting)</h3>
+          <p class="muted">Across thousands of projects globally, audited and GPS‑verified.</p>
+        </article>
+        <article class="card">
+          <div class="stat">Transparency</div>
+          <h3>you can see</h3>
+          <p class="muted">Project reports, coordinates, and photos show exactly where your dollars go.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= How it works ================= -->
+  <section class="section" id="how" style="background: var(--brand-offwhite);">
+    <div class="container">
+      <div class="grid grid-2">
+        <div>
+          <span class="pill">How it works</span>
+          <h2 style="margin:.6rem 0 1rem">From your campus to clean water, step by step</h2>
+          <div class="steps">
+            <div class="step">
+              <h3>Give what you can</h3>
+              <p class="muted">Start with $10 or set a monthly amount that fits your budget.</p>
+            </div>
+            <div class="step">
+              <h3>We deploy with local partners</h3>
+              <p class="muted">Funds support community‑led solutions like wells, piping, and filtration.</p>
+            </div>
+            <div class="step">
+              <h3>See proof</h3>
+              <p class="muted">We share updates with photos, GPS, and outcomes you can cite in class or clubs.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card" aria-label="Illustrative photo">
+          <!-- TODO: Replace images with your own photography -->
+          <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?q=80&w=1600&auto=format&fit=crop" alt="Kids collecting clean water at a new community tap" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Projects gallery ================= -->
+  <section class="section" id="projects">
+    <div class="container">
+      <div class="grid grid-2" style="align-items:center;">
+        <div>
+          <h2>Recent projects</h2>
+          <p class="muted">A snapshot of work funded by students and young donors like you.</p>
+        </div>
+        <p class="muted" style="text-align:right">Photos are placeholders. Replace before launch.</p>
+      </div>
+      <div class="gallery" role="list">
+        <article class="tile" role="listitem">
+          <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1200&auto=format&fit=crop" alt="Community water point with people filling containers" />
+          <span class="label">Ethiopia • Well</span>
+        </article>
+        <article class="tile" role="listitem">
+          <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1200&auto=format&fit=crop" alt="Technician maintaining a water pump" />
+          <span class="label">Uganda • Pump repair</span>
+        </article>
+        <article class="tile" role="listitem">
+          <img src="https://images.unsplash.com/photo-1509099836639-18ba1795216d?q=80&w=1200&auto=format&fit=crop" alt="Women at a water tap station" />
+          <span class="label">Nepal • Tap stand</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Testimonial ================= -->
+  <section class="section" style="background: linear-gradient(180deg, #fff 0, var(--brand-offwhite) 100%);">
+    <div class="container grid grid-2">
+      <div class="card" style="background:linear-gradient(160deg, #ffffff, #f7fbff); border-color:#dfe9f0;">
+        <blockquote>
+          “Clean water didn’t just save time — it changed our whole day. My daughters are in school now.”
+        </blockquote>
+        <cite>— Amina, community leader</cite>
+      </div>
+      <div class="card">
+        <h3>Why students choose us</h3>
+        <ul class="muted">
+          <li>100% model for public donations</li>
+          <li>GPS‑verified projects and open reporting</li>
+          <li>Community‑led solutions with local partners</li>
+        </ul>
+        <div class="cta-row" style="margin-top:.5rem">
+          <a class="btn btn-primary" href="#donate">Donate now</a>
+          <a class="btn btn-outline" href="#faq">Questions? Read the FAQ</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section class="section" id="faq">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <details>
+        <summary>Where does my money go?</summary>
+        <p class="muted">Public donations fund water projects. A separate group of private donors covers operations, so 100% of your gift goes to the field.</p>
+      </details>
+      <details>
+        <summary>Will I see the impact?</summary>
+        <p class="muted">Yes. We share project updates, photos, and locations so you can follow along and share with friends.</p>
+      </details>
+      <details>
+        <summary>Can I give monthly?</summary>
+        <p class="muted">Absolutely. Monthly giving helps us plan with local partners and sustain repairs.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================= Sign up ================= -->
+  <section class="section" style="background: var(--brand-ink); color:#fff;">
+    <div class="container grid grid-2">
+      <div>
+        <h2 style="color:#fff">Get project updates</h2>
+        <p class="muted" style="color:#e8e8e8">Be the first to hear about new wells, repairs, and milestones.</p>
+      </div>
+      <form class="card" style="background:#111; border-color:#222;" action="/api/signup" method="post" aria-label="Email sign up">
+        <label for="email" class="muted" style="color:#c9c9c9">Email address</label>
+        <input id="email" name="email" type="email" placeholder="you@university.edu" required
+               style="width:100%; margin:.4rem 0 .8rem; padding:.9rem 1rem; border-radius:10px; border:1px solid #333; background:#181818; color:#fff;" />
+        <button class="btn btn-primary" type="submit">Sign up</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ================= Footer ================= -->
+  <footer>
+    <div class="container section foot">
+      <div class="footer-grid">
+        <div>
+          <div class="brand" style="margin-bottom:.5rem">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span>charity: water</span>
+          </div>
+          <p class="legal">© 2025 charity: water. 501(c)(3). EIN 22‑3936753. All donations are tax‑deductible as allowed by law.</p>
+        </div>
+        <div>
+          <strong>Explore</strong>
+          <ul style="list-style:none; padding:0; margin:.6rem 0 0; line-height:2;">
+            <li><a href="#impact">Impact</a></li>
+            <li><a href="#how">How it works</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div>
+          <strong>Connect</strong>
+          <ul style="list-style:none; padding:0; margin:.6rem 0 0; line-height:2;">
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">TikTok</a></li>
+            <li><a href="#">X / Twitter</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="legal" style="margin-top:1rem">Made with ❤️ by student donors and volunteers.</p>
+    </div>
+  </footer>
 </body>
 </html>

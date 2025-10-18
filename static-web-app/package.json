@@ -1,0 +1,30 @@
+{
+  "name": "static-web-app",
+  "version": "1.0.0",
+  "description": "A simple static web application",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "http-server public",
+    "build": "echo 'Build step can be defined here'",
+    "test": "echo 'Test step can be defined here'"
+  },
+  "keywords": [
+    "static",
+    "web",
+    "application"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "http-server": "^0.12.3"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/static-web-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/static-web-app/issues"
+  },
+  "homepage": "https://github.com/yourusername/static-web-app#readme"
+}
